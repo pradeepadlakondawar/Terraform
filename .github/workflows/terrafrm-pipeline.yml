@@ -10,7 +10,7 @@ on:
   workflow_dispatch:  # Allow manual triggering
 
 env:
-  TF_WORKING_DIR: Proj5_aws-infrastructure-automation/
+  TF_WORKING_DIR: Proj6_aws-infrastructure-automation/
 
 jobs:
   validate:
