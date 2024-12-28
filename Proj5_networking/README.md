@@ -1,4 +1,4 @@
-s# Proj5_Networking
+# Proj5_Networking
 
 This project demonstrates the modularized implementation of a complete networking setup using Terraform. The setup includes VPC, subnets, Internet Gateway, NAT Gateway, and Security Groups. Each component is designed as a reusable module to ensure scalability, maintainability, and ease of use.
 
