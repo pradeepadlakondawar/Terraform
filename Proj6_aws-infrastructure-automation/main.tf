@@ -12,7 +12,7 @@ module "subnet" {
   vpc_id             = module.vpc.vpc_id
   private_cidr_block = "10.0.2.0/24"
   public_cidr_block  = "10.0.1.0/24"
-  availability_zone  = "us-west-2a"
+  availability_zone  = "us-east-1a"
 }
 
 # Security-group
@@ -49,17 +49,17 @@ module "iam_role" {
 
 module "ec2_instance" {
   source              = "./modules/ec2-instance"
-  ami_id              = "ami-05d38da78ce859165"
+  ami_id              = "ami-0e2c8caa4b6378d8c"
   instance_type       = "t2.micro"
   subnet_id           = module.subnet.public_subnet_id
   security_group_id   = module.security_group.security_group_id
   iam_role_arn        = module.iam_role.instance_profile_name
-  key_name            = "aws-infrastructure-automation"
+  key_name            = "TerraformProj"
   associate_public_ip = true
   user_data           = "#!/bin/bash\nsudo apt-get update -y\nsudo apt-get install -y nginx"
   name                = "web-server"
   volume_size         = 10
-  availability_zone   = "us-west-2a"
+  availability_zone   = "us-east-1a"
   ebs_size            = 20
 
 }
