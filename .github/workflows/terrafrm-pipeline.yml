@@ -19,6 +19,14 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
+      - name: Check AWS CLI Version
+        run: aws --version
+
+      - name: Debug AWS Credentials
+        run: |
+          echo "AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}"
+          echo "AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+          echo "AWS_REGION: ${{ env.AWS_REGION }}"
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
