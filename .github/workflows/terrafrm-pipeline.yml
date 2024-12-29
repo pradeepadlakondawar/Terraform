@@ -3,16 +3,16 @@ name: Terraform CI/CD Pipeline
 on:
   push:
     branches:
-      - main  # Trigger the pipeline on pushes to the main branch
+      - main # Trigger the pipeline on pushes to the main branch
   pull_request:
     branches:
-      - main  # Trigger the pipeline on pull requests to the main branch
-  workflow_dispatch:  # Allow manual triggering
+      - main # Trigger the pipeline on pull requests to the main branch
+  workflow_dispatch: # Allow manual triggering
     inputs:
       action:
-        description: 'Choose Terraform action'
+        description: "Choose Terraform action"
         required: true
-        default: 'plan'
+        default: "plan"
         type: choice
         options:
           - plan
@@ -29,15 +29,9 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
-        
+
       - name: Check AWS CLI Version
         run: aws --version
-
-      - name: Debug AWS Credentials
-        run: |
-          echo "AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}"
-          echo "AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}"
-          echo "AWS_REGION: ${{ env.AWS_REGION }}"
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v3
@@ -53,68 +47,18 @@ jobs:
       - name: Terraform Init
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform init
-        
+
       - name: Terraform Validate
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform validate
 
-  # # plan stage (awlays runs)
-  # plan:
-  #   name: Plan Terraform Changes
-  #   runs-on: ubuntu-latest
-  #   needs: validate  # Specifies dependency on the validate job
-  #   steps:
-  #     - name: Checkout Code
-  #       uses: actions/checkout@v3
-
-  #     - name: Setup Terraform
-  #       uses: hashicorp/setup-terraform@v2
-  #       with:
-  #         terraform_version: 1.5.7
-
-  #     - name: Configure AWS Credentials
-  #       uses: aws-actions/configure-aws-credentials@v3
-  #       with:
-  #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  #         aws-region: ${{ secrets.AWS_REGION }}
-
-  #     - name: Terraform Init
-  #       working-directory: ${{ env.TF_WORKING_DIR }}
-  #       run: terraform init
+      # # plan stage (awlays runs)
 
       - name: Terraform Plan
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform plan -out=tfplan
 
-  # apply:
-  #   name: Apply Terraform Changes
-  #   runs-on: ubuntu-latest
-  #   needs: plan  # Specifies dependency on the plan job
-  #   if: github.event.inputs.action == 'apply'  # Apply only when triggered with "apply"
-  #   steps:
-  #     - name: Checkout Code
-  #       uses: actions/checkout@v3
-
-  #     - name: Setup Terraform
-  #       uses: hashicorp/setup-terraform@v2
-  #       with:
-  #         terraform_version: 1.5.7
-
-  #     - name: Configure AWS Credentials
-  #       uses: aws-actions/configure-aws-credentials@v3
-  #       with:
-  #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  #         aws-region: ${{ secrets.TF_VAR_region }}
-
-  #     - name: Terraform Init
-  #       working-directory: ${{ env.TF_WORKING_DIR }}
-  #       run: terraform init
-
-  #     - name: Terraform Apply
-  #       working-directory: ${{ env.TF_WORKING_DIR }}
-  #       run: terraform apply -auto-approve tfplan
+      # apply
       - name: Terraform Apply
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform apply -auto-approve tfplan
@@ -123,33 +67,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-  # destroy:
-  #   name: Destroy Terraform Infrastructure
-  #   runs-on: ubuntu-latest
-  #   if: github.event.inputs.action == 'destroy'  # Destroy only when triggered with "destroy"
-  #   steps:
-  #     - name: Checkout Code
-  #       uses: actions/checkout@v3
-
-  #     - name: Setup Terraform
-  #       uses: hashicorp/setup-terraform@v2
-  #       with:
-  #         terraform_version: 1.5.7
-
-  #     - name: Configure AWS Credentials
-  #       uses: aws-actions/configure-aws-credentials@v3
-  #       with:
-  #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  #         aws-region: ${{ secrets.TF_VAR_region }}
-
-  #     - name: Terraform Init
-  #       working-directory: ${{ env.TF_WORKING_DIR }}
-  #       run: terraform init
-
-  #     - name: Terraform Destroy
-  #       working-directory: ${{ env.TF_WORKING_DIR }}
-  #       run: terraform destroy -auto-approve
+      # destroy
       - name: Terraform Destroy
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform destroy -auto-approve
